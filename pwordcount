@@ -1,0 +1,225 @@
+#!/bin/bash
+PYTHON="python3"
+PROGRAM="pwordcount.py"
+
+help() {
+	echo "# pwordcount ============================================================= pwordcount"
+	echo "#%"
+	echo "#% NAME"
+	echo "#%	pwordcount - count number of words in a file and print result"
+	echo "#%	on the standard output"
+	echo "#%"
+	echo "#% SYNOPSIS"
+	echo "#+    ./pwordcount [-h|help] [-m t|u|o] [-p n] files..."
+	echo "#%"
+	echo "#% DESCRIPTION"
+    echo "#%	Calculates the amount of words in one or more files passed as an argument"
+	echo "#%	to the program, writing in the output the respective count requested" 
+	echo "#%	by the user with the parallelization level also chosen by the user."
+	echo "#%"
+	echo "#% OPTIONS"
+    echo "#%	-m: option that defines the counting mode (only one mode per execution)"
+    echo "#%		t: counts the total words (default option)"
+    echo "#%		u: counts the total number of unique/different words"
+    echo "#%		o: counts the number of occurrences of each word in the input files"
+    echo "#%	-p: option that defines the parallelization level"
+    echo "#%		n: defines the number of allowed child processes (by default n=1)"
+	echo "#%	-h, help: shows help information"
+	echo "#%"
+	echo "#% EXAMPLES"
+	echo "#%	pwordcount your_file.txt"
+	echo "#%	pwordcount -m u your_file.txt"
+	echo "#%	pwordcount -p 2 your_file.txt"
+	echo "#%	pwordcount -m o -p 4 your_file.txt your_other_file.txt"
+	echo "#%"
+	echo "#% IMPLEMENTATION"
+	echo "#%	authors   	Rayan S. Santana"
+	echo "#%			Manuel Martinho"
+	echo "#%			Guilherme Bastos"
+	echo "#%"
+	echo "#===================================================================================="
+}
+
+# Checking if $PROGRAM exists before calling it
+if [ ! -f "$PROGRAM" ]; then
+    echo "Error: program file is missing."
+    exit 1
+# Checking if any arguments were given
+elif [ -z "$1" ]; then
+    echo "Error: argument missing"
+    exit 1
+elif [ "$1" == "help" ]; then
+    help
+	exit 1
+elif [ "$1" == "-h" ]; then
+    help
+	exit 1
+else
+	# Option -m [ t | u | o ]
+    if [ "$1" == "-m" ]; then
+		# Checking if given option is valid
+		if [ "$2" != "t" ] && [ "$2" != "u" ] && [ "$2" != "o" ]; then
+			echo "Error: invalid command"
+			exit 1
+		fi
+		# Option -m t
+        if [ "$2" == "t" ]; then
+			# Option -m t -p [ n ]
+            if [ "$3" == "-p" ]; then
+				# Checking if given option is valid
+				if ! [[ "$4" =~ ^[0-9]+$ ]]; then
+					echo "Error: invalid command"
+					exit 1
+				elif [[ "$4" == 0 ]]; then
+					echo "Error: invalid command"
+					exit 1
+				fi
+				for file_path in "${@:5}"; do
+					if [ ! -e "$file_path" ]; then
+						echo "Error: file path does not exist: $file_path"
+						exit 1
+					fi
+				done
+				if [ -z "$5" ]; then
+					echo "Error: no files were given"
+					exit 1
+				fi
+                ${PYTHON} ${PROGRAM} -m t -p "$4" "${@:5}"
+            else
+				for file_path in "${@:3}"; do
+					if [ ! -e "$file_path" ]; then
+						echo "Error: file path does not exist: $file_path"
+						exit 1
+					fi
+				done
+				if [ -z "$3" ]; then
+					echo "Error: no files were given"
+					exit 1
+				fi
+                ${PYTHON} ${PROGRAM} -m t "${@:3}"
+            fi
+		# Option -m u
+        elif [ "$2" == "u" ]; then
+			# Option -m u -p [ n ]
+            if [ "$3" == "-p" ]; then
+				# Checking if given option is valid
+				if ! [[ "$4" =~ ^[0-9]+$ ]]; then
+					echo "Error: invalid command"
+					exit 1
+				elif [[ "$4" == 0 ]]; then
+					echo "Error: invalid command"
+					exit 1
+				fi
+				for file_path in "${@:5}"; do
+					if [ ! -e "$file_path" ]; then
+						echo "Error: file path does not exist: $file_path"
+						exit 1
+					fi
+				done
+				if [ -z "$5" ]; then
+					echo "Error: no files were given"
+					exit 1
+				fi
+                ${PYTHON} ${PROGRAM} -m u -p "$4" "${@:5}"
+            else
+				for file_path in "${@:3}"; do
+					if [ ! -e "$file_path" ]; then
+						echo "Error: file path does not exist: $file_path"
+						exit 1
+					fi
+				done
+				if [ -z "$3" ]; then
+					echo "Error: no files were given"
+					exit 1
+				fi
+                ${PYTHON} ${PROGRAM} -m u "${@:3}"
+            fi
+		# Option -m o
+        elif [ "$2" == "o" ]; then
+			# Option -m o -p [ n ]
+            if [ "$3" == "-p" ]; then
+				# Checking if given option is valid
+				if ! [[ "$4" =~ ^[0-9]+$ ]]; then
+					echo "Error: invalid command"
+					exit 1
+				elif [[ "$4" == 0 ]]; then
+					echo "Error: invalid command"
+					exit 1
+				fi
+				for file_path in "${@:5}"; do
+					if [ ! -e "$file_path" ]; then
+						echo "Error: file path does not exist: $file_path"
+						exit 1
+					fi
+				done
+				if [ -z "$5" ]; then
+					echo "Error: no files were given"
+					exit 1
+				fi
+                ${PYTHON} ${PROGRAM} -m o -p "$4" "${@:5}"
+            else
+				for file_path in "${@:3}"; do
+					if [ ! -e "$file_path" ]; then
+						echo "Error: file path does not exist: $file_path"
+						exit 1
+					fi
+				done
+				if [ -z "$3" ]; then
+					echo "Error: no files were given"
+					exit 1
+				fi
+                ${PYTHON} ${PROGRAM} -m o "${@:3}"
+            fi
+        fi
+	# Option -p [ n ]
+	elif [ "$1" == "-p" ]; then
+		# Checking if given option is valid
+		if ! [[ "$2" =~ ^[0-9]+$ ]]; then
+			echo "Error: invalid command"
+			exit 1
+		elif [[ "$2" == 0 ]]; then
+			echo "Error: invalid command"
+			exit 1
+		fi
+		# Option -p [ n ] -m [ t | u | o ]
+		if [ "$3" == "-m" ]; then
+			# Checking if given option is valid
+			if [ "$4" != "t" ] && [ "$4" != "u" ] && [ "$4" != "o" ]; then
+				echo "Error: invalid command"
+				exit 1
+			fi
+			for file_path in "${@:5}"; do
+				if [ ! -e "$file_path" ]; then
+					echo "Error: file path does not exist: $file_path"
+					exit 1
+				fi
+			done
+			if [ -z "$5" ]; then
+				echo "Error: no files were given"
+				exit 1
+			fi
+			${PYTHON} ${PROGRAM} -p "$2" "$3" "$4" "${@:5}"
+		else
+			for file_path in "${@:3}"; do
+				if [ ! -e "$file_path" ]; then
+					echo "Error: file path does not exist: $file_path"
+					exit 1
+				fi
+			done
+			if [ -z "$3" ]; then
+				echo "Error: no files were given"
+				exit 1
+			fi
+			${PYTHON} ${PROGRAM} -p "$2" "${@:3}"
+		fi
+    # If no options are given
+    else
+		for file_path in "$@"; do
+			if [ ! -e "$file_path" ]; then
+				echo "Error: file path does not exist: $file_path"
+				exit 1
+			fi
+		done
+        ${PYTHON} ${PROGRAM} "$@"
+    fi
+fi
