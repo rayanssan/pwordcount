@@ -34,8 +34,6 @@ help() {
 	echo "#%"
 	echo "#% IMPLEMENTATION"
 	echo "#%	authors   	Rayan S. Santana"
-	echo "#%			Manuel Martinho"
-	echo "#%			Guilherme Bastos"
 	echo "#%"
 	echo "#===================================================================================="
 }
